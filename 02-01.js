@@ -17,13 +17,10 @@ app.get("/png", function(request, response){
     fs.stat(fname, (err, stat)=>{
         if(err){console.log('error:',err);}
         else {
-            jpg = fs.readFile(fname, (err, stat)=>{
-                if(err) {
-                    console.log("error: ", err);
-                } else {
-                    response.writeHead(200, {'Content-Type': 'image/png', 'Content-Length':stat.size});
-                    response.end(jpg,'binary');
-                }
+            jpg = fs.readFile(fname, (err, data)=>{
+                response.contentType('image/jpeg');
+                response.contentLenght = stat.size;
+                response.end(data, 'binary');
             });
         }
     });

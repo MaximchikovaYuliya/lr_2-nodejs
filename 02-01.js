@@ -4,11 +4,6 @@ var fs = require('fs');
 const express = require("express");
 const app = express();
 
-app.get("/", function(request, response){
-    response.statusCode = 404;
-    response.end();
-});
-
 app.get("/html", function(request, response){
     let html = fs.readFileSync('./index.html');
     response.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
@@ -22,9 +17,14 @@ app.get("/png", function(request, response){
     fs.stat(fname, (err, stat)=>{
         if(err){console.log('error:',err);}
         else {
-            jpg = fs.readFileSync(fname);
-            response.writeHead(200, {'Content-Type': 'image/png', 'Content-Length':stat.size});
-            response.end(jpg,'binary');
+            jpg = fs.readFile(fname, (err, stat)=>{
+                if(err) {
+                    console.log("error: ", err);
+                } else {
+                    response.writeHead(200, {'Content-Type': 'image/png', 'Content-Length':stat.size});
+                    response.end(jpg,'binary');
+                }
+            });
         }
     });
 });
@@ -50,6 +50,11 @@ app.get("/jquery", function(request, response){
     let html = fs.readFileSync('./jquery.html');
     response.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
     response.end(html);
+});
+
+app.get("/", function(request, response){
+    response.statusCode = 404;
+    response.end();
 });
 
 app.listen(5000);
